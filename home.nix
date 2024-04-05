@@ -19,6 +19,11 @@
   # environment.
   home.packages = [
     pkgs.ripgrep
+    pkgs.nodePackages.node2nix
+    pkgs.ruff # python static analysis in rust
+    pkgs.starship
+    pkgs.python311Packages.python-lsp-server
+    pkgs.python311Packages.python-lsp-ruff
     # pkgs.emacs-git
     # # Adds the 'hello' command to your environment. It prints a friendly
     # # "Hello, world!" when run.
@@ -101,6 +106,7 @@
 
     (use-package tree-sitter-langs
       :after tree-sitter)
+      (global-tree-sitter-mode)
     '';
       extraPackages = epkgs: with epkgs; [ tsc tree-sitter-langs tree-sitter ];
 
@@ -171,10 +177,10 @@
 
   };
 
-    gtk.gtk3.extraConfig = {
-          "gtk-primary-button-warps-slider" = false;
-          "gtk-overlay-scrolling" = true;
-          "gtk-scrollbar-width" = 12;
-          "gtk-scrollbar-visible" = true;
-        };
+  gtk.gtk3.extraConfig = {
+    "gtk-primary-button-warps-slider" = false;
+    "gtk-overlay-scrolling" = true;
+    "gtk-scrollbar-width" = 12;
+    "gtk-scrollbar-visible" = true;
+  };
 }

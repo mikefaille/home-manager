@@ -12,46 +12,79 @@
 
   inputs = {
     # Specify the source of Home Manager and Nixpkgs.
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-23.11";
+
+    home-manager.inputs.nixpkgs.follows = "nixpkgs";
+
     home-manager = {
       url = "github:nix-community/home-manager";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
     emacs-overlay = {
       url = "github:nix-community/emacs-overlay";
-      inputs.nixpkgs.follows = "nixpkgs";
+
     };
 
+
+
+
+    # fix-emacs-ts.url = "github:pimeys/nixpkgs/emacs-tree-sitter/link-grammars";
+
+    nix-straight.url = "github:nix-community/nix-straight.el";
+    nix-straight.flake = false;
   };
 
-  outputs = { nixpkgs, home-manager,   emacs-overlay, ... }@input:
+  outputs = inputs@{  nixpkgs, emacs-overlay, home-manager, nixpkgs-stable, ... }:
     let
       system = "x86_64-linux";
+
       pkgs = nixpkgs.legacyPackages.${system};
+
+
+
+
+
       specialArgs = {
-        inherit emacs-overlay;
+        inherit emacs-overlay nixpkgs-stable;
+
 
       };
 
+      # nixpkgs = {
+      #   config.allowUnfree = true;
+      #   overlays = [
+      #     emacs-overlay.overlay
+      #   ];
+      # };
+
+
 
     in {
+
       homeConfigurations."michael" = home-manager.lib.homeManagerConfiguration {
+        # pkgs = import nixpkgs { inherit overlays; };
         inherit pkgs;
+
+
+        # optionally use extraSpecialArgs
+        # to pass through arguments to home.nix
         extraSpecialArgs = specialArgs;
-
-
 
 
         # Specify your home configuration modules here, for example,
         # the path to your home.nix.
-        modules = [
 
+        modules = [
+          # ({ pkgs, ... }: { # Rust
+          # nixpkgs.overlays = [ rust-overlay.overlays.default ];
+
+          # })
           ./home.nix
+          ./emacs.nix
+
+
         ];
 
-
-        # Optionally use extraSpecialArgs
-        # to pass through arguments to home.nix
       };
     };
 
